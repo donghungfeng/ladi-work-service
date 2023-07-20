@@ -1,0 +1,15 @@
+package com.example.ladiworkservice.controller.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.repository.NoRepositoryBean;
+
+@NoRepositoryBean
+@AllArgsConstructor
+@Getter
+@Setter
+public class AssignWorkRequest {
+    Long id;
+//    List<DataRequest> dataList;
+}
