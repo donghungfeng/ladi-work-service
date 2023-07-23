@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @EnableWebSecurity
@@ -15,8 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    @Autowired
-    JwtAuthenticationFilter jwtAuthenticationFilter;
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String[] AUTH_WHITELIST = {
@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and().authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/**/login").permitAll()
+                .antMatchers("/**/unit/**").permitAll()
                 .antMatchers("/**/call/**").permitAll()
                 .antMatchers("/**/call-logs/**").permitAll()
                 .antMatchers("/**/data/createData").permitAll()
@@ -41,8 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**/data/update-status-data/ghn").permitAll()
                 .anyRequest().authenticated();
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
     }
 }
-
