@@ -37,7 +37,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
 
     @Override
     public BaseResponse checkIn(Log_workRequest logWorkRequest) {
-        if (logWorkRequest.getType() == 0) {
+        if (logWorkRequest.getType() == 1) {
             return checkInOnsite(logWorkRequest);
         } else {
             return checkInRemote(logWorkRequest);
