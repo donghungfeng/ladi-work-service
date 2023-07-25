@@ -13,4 +13,5 @@ public interface UnitRepository extends BaseRepository<Unit> {
     List<Unit> findAll();
     @Query(value = "select * from unit u where u.id = :unitId ", nativeQuery = true)
     Unit findUnitById(Long unitId);
+    Unit findByCode(String code);
 }
