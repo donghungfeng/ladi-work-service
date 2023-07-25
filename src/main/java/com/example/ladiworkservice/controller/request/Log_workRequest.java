@@ -12,8 +12,9 @@ import javax.persistence.Column;
 public class Log_workRequest {
     private String employeeName;
     private String employeeCode;
-    private int locationType;
     private String locationName;
+    private String address;
+    private String secretKey;
     private Long unitId;
     private int type;
     private Long time;

@@ -24,8 +24,6 @@ public class Location extends BaseEntity{
     private String secretKey;
     @Column(name = "status")
     private int status;
-    @Column(name = "type")
-    private int type;
     @ManyToOne
     @JoinColumn(name = "unit_id")
     Unit unit;

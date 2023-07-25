@@ -35,13 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**/unit/**").permitAll()
                 .antMatchers("/**/ip").permitAll()
                 .antMatchers("/**/log_work/**").permitAll()
-                .antMatchers("/**/data/createData").permitAll()
-                .antMatchers("/**/data/create/v2").permitAll()
-                .antMatchers("/**/data/update-status-data/ghsv").permitAll()
-                .antMatchers("/**/data/update-status-data/ghn").permitAll()
+                .antMatchers("/**/location/**").permitAll()
                 .anyRequest().authenticated();
-
-
-
     }
 }

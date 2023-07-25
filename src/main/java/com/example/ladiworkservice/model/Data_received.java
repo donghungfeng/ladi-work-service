@@ -13,4 +13,5 @@ public class Data_received {
     private String name;
     private String code;
     private Long time;
+    private String address;
 }

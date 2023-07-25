@@ -23,12 +23,21 @@ public class IPController {
                     InetAddress address = addresses.nextElement();
                     if (!address.isLoopbackAddress() && address.getHostAddress().contains(".")) {
                         String wifiName = networkInterface.getDisplayName();
-                        return new BaseResponse(200, null, address.getHostAddress() + wifiName);
+                        String ssid = getSSID(networkInterface);
+                        return new BaseResponse(200, null, address.getHostAddress() + wifiName+ssid);
                     }
                 }
             }
 //        }
         return new BaseResponse(500, "không ket noi wifi", null);
+    }
+    private String getSSID(NetworkInterface networkInterface) throws SocketException {
+        byte[] ssidBytes = networkInterface.getHardwareAddress();
+        String ssid = "";
+        for (int i = 0; i < ssidBytes.length; i++) {
+            ssid += String.format("%02X:", ssidBytes[i]);
+        }
+        return ssid.substring(0, ssid.length() - 1);
     }
 }
 

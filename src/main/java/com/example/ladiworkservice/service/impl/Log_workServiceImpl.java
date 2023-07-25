@@ -4,6 +4,7 @@ import com.example.ladiworkservice.controller.reponse.BaseResponse;
 import com.example.ladiworkservice.controller.request.Log_workRequest;
 import com.example.ladiworkservice.model.Data_received;
 import com.example.ladiworkservice.model.Data_sent;
+import com.example.ladiworkservice.model.Location;
 import com.example.ladiworkservice.model.Log_work;
 import com.example.ladiworkservice.repository.BaseRepository;
 import com.example.ladiworkservice.repository.LocationRepository;
@@ -35,8 +36,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     @Override
     public BaseResponse checkIn(Log_workRequest logWorkRequest) {
 
-        if (logWorkRequest.getLocationType() == 0) {
-            String locationIP = locationRepository.findAllLocationByUnitAndTypeAndName(logWorkRequest.getUnitId(),logWorkRequest.getLocationName(),  0).getIp();
+        if (logWorkRequest.getType() == 0) {
+            String locationIP = locationRepository.findAllLocationByUnitAndName(logWorkRequest.getUnitId(),logWorkRequest.getLocationName()).getIp();
             if (locationIP.equals(logWorkRequest.getIp())) {
                 Date today = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -44,14 +45,15 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 Long time = Long.parseLong(formatter.format(today));
 
                 Gson gson = new Gson();
-                Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time);
+                Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time,logWorkRequest.getAddress());
                 Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode());
                 String data_received = gson.toJson(dataReceived);
                 String data_sent = gson.toJson(dataSent);
                 Log_work logWork = modelMapper.map(logWorkRequest, Log_work.class);
+                logWork.setTime(time);
                 logWork.setDataReceived(data_received);
                 logWork.setDataSent(data_sent);
-                logWork.setLocation(locationRepository.findAllLocationByUnitAndTypeAndName(logWorkRequest.getUnitId(),logWorkRequest.getLocationName(),  0));
+                logWork.setLocation(locationRepository.findAllLocationByUnitAndName(logWorkRequest.getUnitId(),logWorkRequest.getLocationName()));
                 logWork.setUnit(unitRepository.findUnitById(logWorkRequest.getUnitId()));
                 return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
             }
@@ -60,15 +62,24 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
             formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             Long time = Long.parseLong(formatter.format(today));
-
             Gson gson = new Gson();
-            Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time);
+            Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress());
             Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode());
             String data_received = gson.toJson(dataReceived);
             String data_sent = gson.toJson(dataSent);
             Log_work logWork = modelMapper.map(logWorkRequest, Log_work.class);
             logWork.setDataReceived(data_received);
             logWork.setDataSent(data_sent);
+            logWork.setTime(time);
+
+            Location location = modelMapper.map(logWorkRequest, Location.class);
+            location.setName(logWorkRequest.getLocationName());
+            location.setAddress(logWorkRequest.getAddress());
+            location.setIp(logWorkRequest.getIp());
+            location.setStatus(logWorkRequest.getStatus());
+            location.setSecretKey(logWorkRequest.getSecretKey());
+            locationRepository.save(location);
+            logWork.setLocation(locationRepository.findAllLocationByName(location.getName()));
             return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
         }
         return new BaseResponse(500, "Error", null);
