@@ -2,6 +2,7 @@ package com.example.ladiworkservice.controller;
 
 
 import com.example.ladiworkservice.controller.reponse.BaseResponse;
+import com.example.ladiworkservice.controller.reponse.IPResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,22 +23,16 @@ public class IPController {
                 while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
                     if (!address.isLoopbackAddress() && address.getHostAddress().contains(".")) {
-                        String wifiName = networkInterface.getDisplayName();
-                        String ssid = getSSID(networkInterface);
-                        return new BaseResponse(200, null, address.getHostAddress() + wifiName+ssid);
+                        IPResponse ipResponse=new IPResponse();
+                        ipResponse.setIp(address.getHostAddress());
+                        ipResponse.setWifiName(networkInterface.getDisplayName());
+                        return new BaseResponse(200, null, ipResponse);
                     }
                 }
             }
 //        }
         return new BaseResponse(500, "không ket noi wifi", null);
     }
-    private String getSSID(NetworkInterface networkInterface) throws SocketException {
-        byte[] ssidBytes = networkInterface.getHardwareAddress();
-        String ssid = "";
-        for (int i = 0; i < ssidBytes.length; i++) {
-            ssid += String.format("%02X:", ssidBytes[i]);
-        }
-        return ssid.substring(0, ssid.length() - 1);
-    }
+
 }
 
