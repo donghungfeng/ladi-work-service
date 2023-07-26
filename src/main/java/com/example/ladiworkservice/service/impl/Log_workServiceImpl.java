@@ -46,9 +46,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
 
     private BaseResponse checkInOnsite(Log_workRequest logWorkRequest) {
         try {
-            Location location = locationRepository.findAllLocationByUnitAndName(logWorkRequest.getUnitId(), logWorkRequest.getLocationName());
-            String locationIP = location.getIp();
-            if (locationIP.equals(logWorkRequest.getIp())) {
+            Location location = locationRepository.findAllLocationByUnitAndIp(logWorkRequest.getUnitId(), logWorkRequest.getIp());
+            if (location !=null) {
                 Date today = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
@@ -96,9 +95,15 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         location.setIp(logWorkRequest.getIp());
         location.setStatus(logWorkRequest.getStatus());
         location.setSecretKey(logWorkRequest.getSecretKey());
-        locationRepository.save(location);
-        logWork.setLocation(locationRepository.findAllLocationByName(location.getName()));
-        return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
+        if(locationRepository.findAllLocationByIp(location.getIp()) ==null) {
+            locationRepository.save(location);
+            logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
+            return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
+        }
+        else {
+            logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
+            return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
+        }
     }
 }
 
