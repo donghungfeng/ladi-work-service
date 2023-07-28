@@ -16,8 +16,5 @@ public class LocationServiceImpl extends BaseServiceImpl<Location> implements Lo
     protected BaseRepository<Location> getRepository() {
         return locationRepository;
     }
-    @Override
-    public BaseResponse getAllLocationReSentByUnit(Long unitId) {
-        return new BaseResponse(200, "Ok", locationRepository.findAllLocationReSentByUnit(unitId));
-    }
+
 }

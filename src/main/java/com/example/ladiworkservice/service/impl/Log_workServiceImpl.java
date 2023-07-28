@@ -14,9 +14,11 @@ import com.example.ladiworkservice.service.Log_workService;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 @Service
@@ -47,7 +49,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     private BaseResponse checkInOnsite(Log_workRequest logWorkRequest) {
         try {
             Location location = locationRepository.findAllLocationByUnitAndIp(logWorkRequest.getUnitId(), logWorkRequest.getIp());
-            if (location !=null) {
+            if (location != null) {
                 Date today = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
@@ -97,11 +99,31 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         location.setStatus(logWorkRequest.getStatus());
         location.setSecretKey(logWorkRequest.getSecretKey());
 
-        if(locationRepository.findAllLocationByIp(location.getIp()) ==null) {
+        if (locationRepository.findAllLocationByIp(location.getIp()) == null) {
             locationRepository.save(location);
         }
         logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
         return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
     }
+
+    @Override
+    public BaseResponse findLogWorkByUser(String code, Long unitId, String sort, int size, int page) {
+        String[] sortList = sort.split(",");
+        Sort.Direction direction = sortList[1].equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, direction, sortList[0]);
+
+        List<Log_work> logWorkList = logWorkRepository.findLogWorkByUser(code, unitId);
+
+        if (!logWorkList.isEmpty()) {
+            // Thực hiện phân trang dựa trên danh sách kết quả và thông tin phân trang đã có
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), logWorkList.size());
+            Page<Log_work> logWorkPage = new PageImpl<>(logWorkList.subList(start, end), pageable, logWorkList.size());
+            return new BaseResponse(200, "OK", logWorkPage.getContent());
+        } else {
+            return new BaseResponse(500, "Không tìm thấy dữ liệu phù hợp", null);
+        }
+    }
+
 }
 

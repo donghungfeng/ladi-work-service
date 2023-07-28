@@ -17,9 +17,6 @@ public class LocationController extends BaseController<Location>{
     protected BaseService<Location> getService() {
         return locationService;
     }
-    @GetMapping("getAllRecentLocation")
-    public BaseResponse getAll(@RequestParam Long unitId){
-        return this.locationService.getAllLocationReSentByUnit(unitId);
-    }
+
 
 }
