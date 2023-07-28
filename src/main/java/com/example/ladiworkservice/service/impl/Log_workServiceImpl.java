@@ -88,6 +88,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         logWork.setDataReceived(data_received);
         logWork.setDataSent(data_sent);
         logWork.setTime(time);
+        logWork.setUnit(unitRepository.findUnitById(logWorkRequest.getUnitId()));
         //Thêm location khi remote
         Location location = modelMapper.map(logWorkRequest, Location.class);
         location.setName(logWorkRequest.getLocationName());
@@ -95,6 +96,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         location.setIp(logWorkRequest.getIp());
         location.setStatus(logWorkRequest.getStatus());
         location.setSecretKey(logWorkRequest.getSecretKey());
+
         if(locationRepository.findAllLocationByIp(location.getIp()) ==null) {
             locationRepository.save(location);
         }
