@@ -16,11 +16,10 @@ import java.util.Enumeration;
 @CrossOrigin
 public class IPController {
     @GetMapping(value = "", produces = "application/json")
-    public BaseResponse getIPv4Address() throws UnknownHostException, SocketException {
+    public BaseResponse getIPv4Address() throws  SocketException {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
             NetworkInterface networkInterface = interfaces.nextElement();
-//            if (networkInterface.getName().startsWith("Wireless LAN adapter Wi-Fi")) {
                 Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
@@ -31,10 +30,8 @@ public class IPController {
                         return new BaseResponse(200, null, ipResponse);
                     }
                 }
-            }
-//        }
+        }
         return new BaseResponse(500, "không ket noi wifi", null);
     }
-
 }
 

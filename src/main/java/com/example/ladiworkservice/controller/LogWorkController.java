@@ -3,10 +3,8 @@ package com.example.ladiworkservice.controller;
 import com.example.ladiworkservice.controller.reponse.BaseResponse;
 import com.example.ladiworkservice.controller.request.Log_workRequest;
 import com.example.ladiworkservice.model.Log_work;
-import com.example.ladiworkservice.model.Unit;
 import com.example.ladiworkservice.service.BaseService;
 import com.example.ladiworkservice.service.Log_workService;
-import com.example.ladiworkservice.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

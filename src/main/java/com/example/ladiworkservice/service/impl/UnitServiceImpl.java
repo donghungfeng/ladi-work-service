@@ -16,9 +16,4 @@ public class UnitServiceImpl extends BaseServiceImpl<Unit> implements UnitServic
     protected BaseRepository<Unit> getRepository() {
         return unitRepository;
     }
-    @Override
-    public BaseResponse getAllUnit() {
-        return new BaseResponse(200, "Ok", unitRepository.findAllByOrderByIdDesc());
-    }
-
 }

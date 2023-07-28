@@ -4,7 +4,6 @@ import com.example.ladiworkservice.controller.reponse.BaseResponse;
 import com.example.ladiworkservice.model.Unit;
 import com.example.ladiworkservice.repository.UnitRepository;
 import com.example.ladiworkservice.service.BaseService;
-
 import com.example.ladiworkservice.service.UnitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +20,6 @@ public class UnitController extends BaseController<Unit>{
     @Override
     protected BaseService<Unit> getService() {
         return unitService;
-    }
-    @GetMapping("getAll")
-    public BaseResponse getAll(){
-        return this.unitService.getAllUnit();
     }
     @Override
     public BaseResponse create(@RequestBody Unit unit) throws JsonProcessingException {

@@ -97,13 +97,9 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         location.setSecretKey(logWorkRequest.getSecretKey());
         if(locationRepository.findAllLocationByIp(location.getIp()) ==null) {
             locationRepository.save(location);
-            logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
-            return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
         }
-        else {
-            logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
-            return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
-        }
+        logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
+        return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
     }
 }
 
