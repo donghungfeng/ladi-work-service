@@ -107,13 +107,9 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     }
 
     @Override
-    public BaseResponse findLogWorkByUser(String code, Long unitId, String sort, int size, int page) {
-        String[] sortList = sort.split(",");
-        Sort.Direction direction = sortList[1].equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, direction, sortList[0]);
-
-        List<Log_work> logWorkList = logWorkRepository.findLogWorkByUser(code, unitId);
-
+    public BaseResponse findLogWorkByUser(String code, Long unitId,Long startDate,Long endDate, int size, int page) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Log_work> logWorkList = logWorkRepository.findLogWorkByUser(code, unitId,startDate,endDate);
         if (!logWorkList.isEmpty()) {
             // Thực hiện phân trang dựa trên danh sách kết quả và thông tin phân trang đã có
             int start = (int) pageable.getOffset();

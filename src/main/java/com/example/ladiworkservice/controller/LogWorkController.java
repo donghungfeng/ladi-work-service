@@ -24,8 +24,8 @@ public class LogWorkController extends BaseController<Log_work>{
         return logWorkService.checkIn(logWorkRequest);
     }
     @GetMapping("searchByUser")
-    public BaseResponse findLogWorkByUser(@RequestParam String code,@RequestParam Long unitId , @RequestParam String sort, @RequestParam int size, @RequestParam int page)
+    public BaseResponse findLogWorkByUser(@RequestParam String code,@RequestParam Long unitId,@RequestParam Long startDate,@RequestParam Long endDate , @RequestParam int size, @RequestParam int page)
     {
-        return logWorkService.findLogWorkByUser(code, unitId, sort, size, page);
+        return logWorkService.findLogWorkByUser(code, unitId,startDate, endDate, size, page);
     }
 }
