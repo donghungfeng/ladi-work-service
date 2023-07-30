@@ -24,7 +24,7 @@ public class LocationController extends BaseController<Location>{
     }
     @Override
     public BaseResponse create(@RequestBody Location location) throws JsonProcessingException {
-        if(locationRepository.findAllLocationByIp(location.getIp())!=null){
+        if(locationRepository.findAllLocationByUnitAndIp(location.getUnit().getId(),location.getIp())!=null ){
             return new BaseResponse(500, "Thiết bị chấm công đã tồn tại",null );
         }
 
