@@ -80,6 +80,9 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     }
 
     private BaseResponse checkInRemote(Log_workRequest logWorkRequest) {
+        if(unitRepository.findUnitById(logWorkRequest.getUnitId())==null){
+            return new BaseResponse(500, "Nhân viên không thuộc công ty không thực hiện được chấm công", null);
+        }
         Date today = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
