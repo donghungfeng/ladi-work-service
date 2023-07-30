@@ -49,6 +49,9 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     private BaseResponse checkInOnsite(Log_workRequest logWorkRequest) {
         try {
             Location location = locationRepository.findAllLocationByUnitAndIp(logWorkRequest.getUnitId(), logWorkRequest.getIp());
+            if(unitRepository.findUnitById(logWorkRequest.getUnitId())==null){
+                return new BaseResponse(500, "Nhân viên không thuộc công ty không thực hiện được chấm công", null);
+            }
             if (location != null) {
                 Date today = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -56,8 +59,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 Long time = Long.parseLong(formatter.format(today));
 
                 Gson gson = new Gson();
-                Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress());
-                Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode());
+                Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress(),logWorkRequest.getUnitId());
+                Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(),logWorkRequest.getUnitId());
                 String data_received = gson.toJson(dataReceived);
                 String data_sent = gson.toJson(dataSent);
 
@@ -82,8 +85,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
         Long time = Long.parseLong(formatter.format(today));
         Gson gson = new Gson();
-        Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress());
-        Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode());
+        Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress(),logWorkRequest.getUnitId());
+        Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(),logWorkRequest.getUnitId());
         String data_received = gson.toJson(dataReceived);
         String data_sent = gson.toJson(dataSent);
         Log_work logWork = modelMapper.map(logWorkRequest, Log_work.class);
