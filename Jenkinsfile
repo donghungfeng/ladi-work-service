@@ -57,7 +57,7 @@ pipeline {
 						//sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker rm ' + container_name + '"'
 	
 						// Run container with new image
-						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker run -itdp 82:80 --name ' + container_name + ' ' + repo + ':latest"'
+						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker run -itdp 8084:8080 --name ' + container_name + ' ' + repo + ':latest"'
 	
 						// Remove compressed image
 						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "rm ' + image + '"'
