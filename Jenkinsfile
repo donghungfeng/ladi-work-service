@@ -1,5 +1,5 @@
 def TeleUrl = 'https://api.telegram.org/bot1647436660:AAF8OrMu-FqlwWxj2_M4k_allIGLNwjS83E/sendMessage'
-def TeleChatId = -1001249400214
+def TeleChatId = -912839571
 def ServiceName = '[Work_BE]'
 def GIT_COMMIT_MSG
 def GIT_AUTHOR
@@ -51,10 +51,10 @@ pipeline {
 						// Build image on Staging host
 	
 						// Stop current container
-						//sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker stop ' + container_name + '"'
+						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker stop ' + container_name + '"'
 	
 						// Remove current container
-						//sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker rm ' + container_name + '"'
+						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker rm ' + container_name + '"'
 	
 						// Run container with new image
 						sh 'ssh -i ~/.ssh/id_rsa root@' + staging_host + ' "docker run -itdp 8084:8080 --name ' + container_name + ' ' + repo + ':latest"'
