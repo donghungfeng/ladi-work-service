@@ -12,17 +12,26 @@ import javax.persistence.Table;
 @Data
 @NoArgsConstructor
 public class ListLogWork extends BaseEntity {
-    @Column(name = "info_user")
-    private String infoUser;
+    @Column(name = "data_received")
+    private String dataReceived;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "time")
     private Long time;
 
     @Column(name = "check_in_time")
-    private Long checkInTime;
+    private String checkInTime;
 
     @Column(name = "check_out_time")
-    private Long checkOutTime;
+    private String checkOutTime;
+
+    @Column(name = "total_log_time")
+    private double totalLogTime;
 
     @Column(name = "log_work_type")
     private int logWorkType;

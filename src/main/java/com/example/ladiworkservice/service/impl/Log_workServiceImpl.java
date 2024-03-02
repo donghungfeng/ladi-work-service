@@ -2,14 +2,8 @@ package com.example.ladiworkservice.service.impl;
 
 import com.example.ladiworkservice.controller.reponse.BaseResponse;
 import com.example.ladiworkservice.controller.request.Log_workRequest;
-import com.example.ladiworkservice.model.Data_received;
-import com.example.ladiworkservice.model.Data_sent;
-import com.example.ladiworkservice.model.Location;
-import com.example.ladiworkservice.model.Log_work;
-import com.example.ladiworkservice.repository.BaseRepository;
-import com.example.ladiworkservice.repository.LocationRepository;
-import com.example.ladiworkservice.repository.Log_workRepository;
-import com.example.ladiworkservice.repository.UnitRepository;
+import com.example.ladiworkservice.model.*;
+import com.example.ladiworkservice.repository.*;
 import com.example.ladiworkservice.service.Log_workService;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
@@ -17,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -29,6 +26,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
     LocationRepository locationRepository;
     @Autowired
     UnitRepository unitRepository;
+    @Autowired
+    ListLogWorkRepository listLogWorkRepository;
     @Autowired
     ModelMapper modelMapper;
 
@@ -58,6 +57,10 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
                 Long time = Long.parseLong(formatter.format(today));
 
+                Date timeToday = new Date();
+                SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                formatter1.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                String time1 = String.valueOf(formatter1.format(timeToday));
                 Gson gson = new Gson();
                 Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress(),logWorkRequest.getUnitId());
                 Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(),logWorkRequest.getUnitId());
@@ -70,6 +73,37 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 logWork.setDataSent(data_sent);
                 logWork.setLocation(location);
                 logWork.setUnit(unitRepository.findUnitById(logWorkRequest.getUnitId()));
+
+                ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode());
+                ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode());
+                if(logWorkResult != null) {
+                    logWorkResult.setCheckOutTime(time1);
+                    logWorkResult.setNote(logWorkRequest.getMessage());
+                    Date checkInTime = new Date(logWorkResult.getCheckInTime());
+                    Date checkOutTime = new Date(time1);
+                    double hours = calculateDuration(checkInTime, checkOutTime);
+                    System.out.println(hours);
+                    logWorkResult.setTotalLogTime(hours);
+                    listLogWorkRepository.save(logWorkResult);
+                } else if(logWorkCheckOutResult != null) {
+                    logWorkCheckOutResult.setCheckOutTime(time1);
+                    logWorkCheckOutResult.setNote(logWorkRequest.getMessage());
+                    Date checkInTime = new Date(logWorkCheckOutResult.getCheckInTime());
+                    Date checkOutTime = new Date(time1);
+                    double hours = calculateDuration(checkInTime, checkOutTime);
+                    logWorkCheckOutResult.setTotalLogTime(hours);
+                    listLogWorkRepository.save(logWorkCheckOutResult);
+                } else {
+                    ListLogWork listLogWork = modelMapper.map(logWorkRequest, ListLogWork.class);
+                    listLogWork.setCheckInTime(time1);
+                    listLogWork.setTime(time);
+                    listLogWork.setUserName(logWorkRequest.getEmployeeCode());
+                    listLogWork.setFullName(logWorkRequest.getEmployeeName());
+                    listLogWork.setDataReceived(data_received);
+                    listLogWork.setLogWorkType(logWorkRequest.getType());
+                    listLogWork.setNote(logWorkRequest.getMessage());
+                    listLogWorkRepository.save(listLogWork);
+                }
                 return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
             } else {
                 return new BaseResponse(500, "Không tồn tại Wifi thuộc công ty", null);
@@ -87,6 +121,12 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
         Long time = Long.parseLong(formatter.format(today));
+
+        Date timeToday = new Date();
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        formatter1.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+        String time1 = String.valueOf(formatter1.format(timeToday));
+
         Gson gson = new Gson();
         Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress(),logWorkRequest.getUnitId());
         Data_sent dataSent = new Data_sent(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(),logWorkRequest.getUnitId());
@@ -109,6 +149,37 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
             locationRepository.save(location);
         }
         logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
+
+        ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode());
+        ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode());
+        if(logWorkResult != null) {
+            logWorkResult.setCheckOutTime(time1);
+            logWorkResult.setNote(logWorkRequest.getMessage());
+            Date checkInTime = new Date(logWorkResult.getCheckInTime());
+            Date checkOutTime = new Date(time1);
+            double hours = calculateDuration(checkInTime, checkOutTime);
+            logWorkResult.setTotalLogTime(hours);
+            System.out.println(hours);
+            listLogWorkRepository.save(logWorkResult);
+        } else if(logWorkCheckOutResult != null) {
+            logWorkCheckOutResult.setCheckOutTime(time1);
+            logWorkCheckOutResult.setNote(logWorkRequest.getMessage());
+            Date checkInTime = new Date(logWorkCheckOutResult.getCheckInTime());
+            Date checkOutTime = new Date(time1);
+            double hours = calculateDuration(checkInTime, checkOutTime);
+            logWorkCheckOutResult.setTotalLogTime(hours);
+            listLogWorkRepository.save(logWorkCheckOutResult);
+        } else {
+            ListLogWork listLogWork = modelMapper.map(logWorkRequest, ListLogWork.class);
+            listLogWork.setCheckInTime(time1);
+            listLogWork.setTime(time);
+            listLogWork.setUserName(logWorkRequest.getEmployeeCode());
+            listLogWork.setFullName(logWorkRequest.getEmployeeName());
+            listLogWork.setDataReceived(data_received);
+            listLogWork.setLogWorkType(logWorkRequest.getType());
+            listLogWork.setNote(logWorkRequest.getMessage());
+            listLogWorkRepository.save(listLogWork);
+        }
         return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
     }
 
@@ -126,6 +197,14 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
             return new BaseResponse(500, "Không tìm thấy dữ liệu phù hợp", null);
         }
     }
+    public static Date convertDateTime(long time) {
 
+        return new Date(time);
+    }
+    public static double calculateDuration(Date checkIn, Date checkOut) {
+        double durationMili = checkOut.getTime() - checkIn.getTime();
+        double hours = durationMili / (1000 * 60 * 60);
+        return Math.round(hours * 100.0) / 100.0;
+    }
 }
 
