@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**/ip").permitAll()
                 .antMatchers("/**/log_work/**").permitAll()
                 .antMatchers("/**/location/**").permitAll()
+                .antMatchers("/**/list_log_work/**").permitAll()
                 .anyRequest().authenticated();
     }
 }

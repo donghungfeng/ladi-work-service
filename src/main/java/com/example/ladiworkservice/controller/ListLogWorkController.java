@@ -18,7 +18,7 @@ public class ListLogWorkController extends BaseController<ListLogWork> {
     protected BaseService<ListLogWork> getService() { return listLogWorkService; }
 
     @GetMapping("searchData")
-    public BaseResponse findDataByDate(@RequestParam Long startDate, @RequestParam Long endDate, @RequestParam int size, @RequestParam int page) {
-        return listLogWorkService.findDataByDate(startDate, endDate, size, page);
+    public BaseResponse findDataByDate(@RequestParam Long startDate, @RequestParam Long endDate) {
+        return listLogWorkService.findDataByDate(startDate, endDate);
     }
 }

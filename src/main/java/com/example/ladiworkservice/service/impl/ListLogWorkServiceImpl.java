@@ -28,15 +28,10 @@ public class ListLogWorkServiceImpl extends BaseServiceImpl<ListLogWork> impleme
     protected BaseRepository<ListLogWork> getRepository() { return listLogWorkRepository; }
 
     @Override
-    public BaseResponse findDataByDate(Long startDate, Long endDate, int size, int page) {
-        Pageable pageable = PageRequest.of(page, size);
+    public BaseResponse findDataByDate(Long startDate, Long endDate) {
         List<ListLogWork> listLogWorks = listLogWorkRepository.findDataByDate(startDate, endDate);
         if (!listLogWorks.isEmpty()) {
-            // Thực hiện phân trang dựa trên danh sách kết quả và thông tin phân trang đã có
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), listLogWorks.size());
-            Page<ListLogWork> listLogWorkPage = new PageImpl<>(listLogWorks.subList(start, end), pageable, listLogWorks.size());
-            return new BaseResponse(200, "OK", listLogWorkPage.getContent());
+            return new BaseResponse(200, "OK", listLogWorks);
         } else {
             return new BaseResponse(500, "Không tìm thấy dữ liệu phù hợp", null);
         }

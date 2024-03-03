@@ -102,6 +102,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                     listLogWork.setDataReceived(data_received);
                     listLogWork.setLogWorkType(logWorkRequest.getType());
                     listLogWork.setNote(logWorkRequest.getMessage());
+                    listLogWork.setUnitName(unitRepository.findUnitById(logWorkRequest.getUnitId()).getName());
                     listLogWorkRepository.save(listLogWork);
                 }
                 return new BaseResponse(200, "OK", logWorkRepository.save(logWork));
@@ -178,6 +179,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
             listLogWork.setDataReceived(data_received);
             listLogWork.setLogWorkType(logWorkRequest.getType());
             listLogWork.setNote(logWorkRequest.getMessage());
+            listLogWork.setUnitName(unitRepository.findUnitById(logWorkRequest.getUnitId()).getName());
             listLogWorkRepository.save(listLogWork);
         }
         return new BaseResponse(200, "OK", logWorkRepository.save(logWork));

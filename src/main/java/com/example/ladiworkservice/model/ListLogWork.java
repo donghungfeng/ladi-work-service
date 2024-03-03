@@ -38,4 +38,7 @@ public class ListLogWork extends BaseEntity {
 
     @Column(name = "note")
     private String note;
+
+    @Column(name = "unitName")
+    private String unitName;
 }
