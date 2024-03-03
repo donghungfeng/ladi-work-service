@@ -188,7 +188,6 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         Pageable pageable = PageRequest.of(page, size);
         List<Log_work> logWorkList = logWorkRepository.findLogWorkByUser(code, unitId,startDate,endDate);
         if (!logWorkList.isEmpty()) {
-            // Thực hiện phân trang dựa trên danh sách kết quả và thông tin phân trang đã có
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), logWorkList.size());
             Page<Log_work> logWorkPage = new PageImpl<>(logWorkList.subList(start, end), pageable, logWorkList.size());
