@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -57,6 +59,10 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
                 Long time = Long.parseLong(formatter.format(today));
 
+                SimpleDateFormat formatter2 = new SimpleDateFormat("yyyyMMdd");
+                formatter2.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                Long time2 = Long.parseLong(formatter2.format(today));
+
                 Date timeToday = new Date();
                 SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 formatter1.setTimeZone(TimeZone.getTimeZone("GMT+7"));
@@ -74,8 +80,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 logWork.setLocation(location);
                 logWork.setUnit(unitRepository.findUnitById(logWorkRequest.getUnitId()));
 
-                ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode());
-                ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode());
+                ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode(), time2);
+                ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode(), time2);
                 if(logWorkResult != null) {
                     logWorkResult.setCheckOutTime(time1);
                     logWorkResult.setNote(logWorkRequest.getMessage());
@@ -96,7 +102,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 } else {
                     ListLogWork listLogWork = modelMapper.map(logWorkRequest, ListLogWork.class);
                     listLogWork.setCheckInTime(time1);
-                    listLogWork.setTime(time);
+                    listLogWork.setTime(time2);
                     listLogWork.setUserName(logWorkRequest.getEmployeeCode());
                     listLogWork.setFullName(logWorkRequest.getEmployeeName());
                     listLogWork.setDataReceived(data_received);
@@ -110,7 +116,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
                 return new BaseResponse(500, "Không tồn tại Wifi thuộc công ty", null);
             }
         } catch (Exception e) {
-            return new BaseResponse(500, "Không tồn tại Wifi thuộc công ty", null);
+            return new BaseResponse(500, "Có lỗi xảy ra", null);
         }
     }
 
@@ -127,6 +133,10 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         formatter1.setTimeZone(TimeZone.getTimeZone("GMT+7"));
         String time1 = String.valueOf(formatter1.format(timeToday));
+
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyyMMdd");
+        formatter2.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+        Long time2 = Long.parseLong(formatter2.format(today));
 
         Gson gson = new Gson();
         Data_received dataReceived = new Data_received(logWorkRequest.getEmployeeName(), logWorkRequest.getEmployeeCode(), time, logWorkRequest.getAddress(),logWorkRequest.getUnitId());
@@ -151,8 +161,8 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         }
         logWork.setLocation(locationRepository.findAllLocationByIp(location.getIp()));
 
-        ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode());
-        ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode());
+        ListLogWork logWorkResult = listLogWorkRepository.findUserWithCheckedIn(logWorkRequest.getEmployeeCode(), time2);
+        ListLogWork logWorkCheckOutResult = listLogWorkRepository.findUserWithCheckedOut(logWorkRequest.getEmployeeCode(), time2);
         if(logWorkResult != null) {
             logWorkResult.setCheckOutTime(time1);
             logWorkResult.setNote(logWorkRequest.getMessage());
@@ -160,7 +170,6 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
             Date checkOutTime = new Date(time1);
             double hours = calculateDuration(checkInTime, checkOutTime);
             logWorkResult.setTotalLogTime(hours);
-            System.out.println(hours);
             listLogWorkRepository.save(logWorkResult);
         } else if(logWorkCheckOutResult != null) {
             logWorkCheckOutResult.setCheckOutTime(time1);
@@ -173,7 +182,7 @@ public class Log_workServiceImpl extends BaseServiceImpl<Log_work> implements Lo
         } else {
             ListLogWork listLogWork = modelMapper.map(logWorkRequest, ListLogWork.class);
             listLogWork.setCheckInTime(time1);
-            listLogWork.setTime(time);
+            listLogWork.setTime(time2);
             listLogWork.setUserName(logWorkRequest.getEmployeeCode());
             listLogWork.setFullName(logWorkRequest.getEmployeeName());
             listLogWork.setDataReceived(data_received);
